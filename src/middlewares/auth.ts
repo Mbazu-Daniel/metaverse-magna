@@ -15,7 +15,7 @@ export const authMiddleware = async (
   }
 
   try {
-    const decodedToken = jwt.verify(token, JWT_SECRET as string) as {
+    const decodedToken = jwt.verify(token, JWT_SECRET) as {
       id: string;
     };
 
