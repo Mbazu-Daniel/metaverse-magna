@@ -2,6 +2,7 @@ import { Container } from "typedi";
 import { Request, Response, Router } from "express";
 import asyncHandler from "express-async-handler";
 import { AuthService } from "../services/auth.service";
+import ApiError from "../utils/ApiError";
 
 const authService = Container.get(AuthService);
 
@@ -12,8 +13,7 @@ export class AuthController {
       const user = await authService.register(email, password);
       res.status(200).json(user);
     } catch (error) {
-      console.error(error);
-      res.status(400).json({ message: error });
+      throw new ApiError(400, "User registration failed");
     }
   });
 
@@ -23,7 +23,8 @@ export class AuthController {
       const { user, token } = await authService.login(email, password);
       res.send({ user, token });
     } catch (error) {
-      res.status(400).send({ message: error });
+      throw new ApiError(400, "email or password is incorrect");
+    
     }
   });
 }

@@ -1,14 +1,13 @@
 import express from "express";
 import { PORT } from "./utils/constants";
-import { AppDataSource } from "./db/database";
+import { AppDataSource } from "./db/data-source";
 import authRouter from "./routes/auth.routes";
-
 
 const app = express();
 app.use(express.json());
 app.use("/auth", authRouter);
 
-// connect DB and start server 
+// connect DB and start server
 AppDataSource.initialize()
   .then(async () => {
     app.listen(PORT, () => {

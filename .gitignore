@@ -1,3 +1,5 @@
 node_modules/
 
 .env
+
+typeorm_src/
