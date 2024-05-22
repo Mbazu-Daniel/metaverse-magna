@@ -3,15 +3,21 @@ import jwt from "jsonwebtoken";
 import { User } from "../entities/User.entity";
 import { JWT_SECRET } from "../utils/constants";
 
+import ApiError from "../utils/ApiError";
+
 export const authMiddleware = async (
   req: Request & { user?: User },
   res: Response,
   next: NextFunction
 ) => {
-  const token = req.headers.authorization?.split(" ")[1];
+  const bearerToken = req.headers.authorization?.split(" ")[1];
+   const cookiesToken = req.cookies.access_token;
+  // const token = bearerToken || cookiesToken;
+  const token = cookiesToken || bearerToken;
+  console.log("🚀 ~ token:", token)
 
   if (!token) {
-    return res.status(401).send({ message: "No token provided" });
+    throw new ApiError(401, "You're not logged in ")
   }
 
   try {
@@ -24,12 +30,13 @@ export const authMiddleware = async (
     });
 
     if (!user) {
-      return res.status(401).send({ message: "Invalid token" });
+      throw new ApiError(401, "Invalid User")
+      
     }
 
     req.user = user;
     next();
   } catch (error) {
-    res.status(400).json({ message: "Invalid token" });
+    throw new ApiError(401, "Invalid Token");
   }
 };

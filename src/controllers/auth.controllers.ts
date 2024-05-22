@@ -21,10 +21,11 @@ export class AuthController {
     try {
       const { email, password } = req.body;
       const { user, token } = await authService.login(email, password);
-      res.send({ user, token });
+      res.cookie("access_token", token, { httpOnly: true });
+      res.json({ token });
     } catch (error) {
+  
       throw new ApiError(400, "email or password is incorrect");
-    
     }
   });
 }
