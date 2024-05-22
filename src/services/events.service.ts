@@ -54,6 +54,19 @@ export class BlockchainService {
     try {
       this.latestBlockNumber = await this.getLatestBlockNumber();
 
+      io.on("connection", (socket) => {
+        // Join room based on event type
+        socket.join(SOCKET_EVENTS.ALL_EVENTS);
+        socket.join(SOCKET_EVENTS.SENDER_OR_RECEIVER_EVENTS);
+        socket.join(SOCKET_EVENTS.SENDER_EVENTS);
+        socket.join(SOCKET_EVENTS.RECEIVER_EVENTS);
+        socket.join(SOCKET_EVENTS.VALUE_RANGE.RANGE_0_100);
+        socket.join(SOCKET_EVENTS.VALUE_RANGE.RANGE_100_500);
+        socket.join(SOCKET_EVENTS.VALUE_RANGE.RANGE_500_2000);
+        socket.join(SOCKET_EVENTS.VALUE_RANGE.RANGE_2000_5000);
+        socket.join(SOCKET_EVENTS.VALUE_RANGE.RANGE_OVER_5000);
+      });
+
       setInterval(async () => {
         try {
           const currentBlockNumber = await this.getLatestBlockNumber();
@@ -66,8 +79,9 @@ export class BlockchainService {
               i <= currentBlockNumber;
               i++
             ) {
-              const block = await this.getBlockByNumber("0x" + i.toString(16));
-              if (block && block.transactions) {
+              const block = await this.getBlockByNumber(`0x${i.toString(16)}`);
+              if (block?.transactions) {
+              
                 block.transactions.forEach(async (tx: any) => {
                   const event = {
                     sender: tx.from,
@@ -82,12 +96,11 @@ export class BlockchainService {
                   const ethValue = parseInt(tx.value, 16) / 1e18; // Value in ETH
                   const valueInUsd = ethValue * 5000; // Assuming 1 ETH = $5000
 
+                  // Always push ALL_EVENTS
+                  const eventsToStore: string[] = [SOCKET_EVENTS.ALL_EVENTS];
+
                   if (tx.from === address || tx.to === address) {
-                    const eventsToStore: string[] = [];
-                    // Determine the event types
-                    eventsToStore.push(SOCKET_EVENTS.ALL_EVENTS);
-                    eventsToStore.push(SOCKET_EVENTS.SENDER_OR_RECEIVER_EVENTS);
-                    eventsToStore.push(SOCKET_EVENTS.ALL_EVENTS);
+                    // Determine the event types and push to db
                     eventsToStore.push(SOCKET_EVENTS.SENDER_OR_RECEIVER_EVENTS);
 
                     if (tx.from === address) {
@@ -118,7 +131,7 @@ export class BlockchainService {
                     // Store and emit events for each determined type
                     for (const eventType of eventsToStore) {
                       const blockchainEvent = new BlockchainEvent();
-                      
+
                       blockchainEvent.sender = event.sender;
                       blockchainEvent.receiver = event.receiver;
                       blockchainEvent.blockNumber = event.blockNumber;
@@ -128,12 +141,8 @@ export class BlockchainService {
                       blockchainEvent.value = event.value;
                       blockchainEvent.eventType = eventType;
 
-                      console.log(
-                        "🚀 ~ BlockchainService ~ block.transactions.forEach ~ blockchainEvent:",
-                        blockchainEvent
-                      );
                       await AppDataSource.manager.save(blockchainEvent);
-                      io.to(`${eventType}`).emit(eventType, event);
+                      io.to(eventType).emit(eventType, event);
                     }
                   }
                 });
@@ -144,7 +153,7 @@ export class BlockchainService {
         } catch (error) {
           console.error("Error in block listening interval:", error);
         }
-      }, 10000); // Poll every 10 seconds
+      }, 10000); // delay for 10 seconds
     } catch (error) {
       console.error("Error starting block listening:", error);
     }
