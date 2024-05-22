@@ -81,7 +81,6 @@ export class BlockchainService {
             ) {
               const block = await this.getBlockByNumber(`0x${i.toString(16)}`);
               if (block?.transactions) {
-              
                 block.transactions.forEach(async (tx: any) => {
                   const event = {
                     sender: tx.from,
@@ -90,7 +89,7 @@ export class BlockchainService {
                     blockHash: block.hash,
                     transactionHash: tx.hash,
                     gasPrice: ethers.utils.formatUnits(tx.gasPrice, "gwei"), // Convert gasPrice to Gwei
-                    value: tx.value,
+                    value: ethers.utils.formatUnits(tx.value, 16),
                   };
 
                   const ethValue = parseInt(tx.value, 16) / 1e18; // Value in ETH

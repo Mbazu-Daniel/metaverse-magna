@@ -11,13 +11,12 @@ export const authMiddleware = async (
   next: NextFunction
 ) => {
   const bearerToken = req.headers.authorization?.split(" ")[1];
-   const cookiesToken = req.cookies.access_token;
+  const cookiesToken = req.cookies.access_token;
   // const token = bearerToken || cookiesToken;
   const token = cookiesToken || bearerToken;
- 
 
   if (!token) {
-    throw new ApiError(401, "You're not logged in ")
+    throw new ApiError(401, "You're not logged in ");
   }
 
   try {
@@ -31,7 +30,7 @@ export const authMiddleware = async (
 
     if (!user) {
       throw new ApiError(401, "Invalid User")
-      
+
     }
 
     req.user = user;

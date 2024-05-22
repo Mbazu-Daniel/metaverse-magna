@@ -17,8 +17,8 @@ const AppDataSource = new DataSource({
   username: DB_USERNAME,
   password: DB_PASSWORD,
   database: DB_DATABASE,
-  entities: [join(__dirname, "**", "*.entity.{ts,js}")],
-  synchronize: false,
+  entities: ["src/entities/*.entity.ts"],
+  synchronize: true,
   logging: false,
 });
 

@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import { Container } from "typedi";
 import { Request, Response, Router } from "express";
 import { BlockchainService } from "../services/events.service";

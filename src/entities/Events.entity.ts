@@ -1,9 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from "typeorm";
 
 @Entity()
-export class BlockchainEvent {
-  @PrimaryGeneratedColumn()
-  id!: number;
+export class BlockchainEvent extends BaseEntity {
+  @PrimaryGeneratedColumn("uuid")
+  id!: string;
 
   @Column()
   sender!: string;
