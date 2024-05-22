@@ -1,36 +1,3 @@
-
-## Problem statement:
-We want to track the activities on the block for our analysis application. For this
-application, we want to stream the transactions on the blockchain as they happen.
-We care about the following fields:
-
- - Sender Address 
- - Receiver Address 
- - BlockNumber 
- - BlockHash 
- - TransactionHash
- - Gas Price in WEI
- - Value in WEI
-
-On completion, your API should be a socket.io endpoint that will allow me to subscribe to events in the following ways:
-
- 1. All events. 
-2. Only events where an address is either the sender or
-    receiver.
- 3.  Only events where an address is the sender 
- 4.  Only events
-    where an address is the receiver
- 5. Assume that 1 ETH  $5,000 and send events within the ranges
-
-			-  0 - 100
-			- 100 - 500
-			- 500 - 2000
-			- 2000 - 5000
-			- 5000
-We do not want just anyone to access our socket endpoints, so we will need a HTTP endpoint to register and log in. All requests to the socket.io endpoint will require a JWT token.
-
-
-
 ## Guideline
 Here are step-by-step guidelines to set up and run the code locally with Docker, using Docker Compose for managing services, and `nodemon` for automatically reloading the application when changes are detected.
 
