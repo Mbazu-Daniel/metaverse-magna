@@ -18,7 +18,7 @@ COPY . .
 RUN pnpm run build
 
 # Expose the port
-EXPOSE 3000
+EXPOSE 8000
 
 # Start the application
-CMD ["pnpm", "run", "start"]
+CMD ["pnpm", "run", "dev"]
