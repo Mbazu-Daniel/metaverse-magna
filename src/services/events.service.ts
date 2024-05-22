@@ -78,9 +78,64 @@ export class BlockchainService {
                     gasPrice: ethers.utils.formatUnits(tx.gasPrice, "gwei"), // Convert gasPrice to Gwei
                     value: tx.value,
                   };
-                  console.log("🚀 ~ BlockchainService ~ block.transactions.forEach ~ event:", event)
-              
-                 
+
+                  const ethValue = parseInt(tx.value, 16) / 1e18; // Value in ETH
+                  const valueInUsd = ethValue * 5000; // Assuming 1 ETH = $5000
+
+                  if (tx.from === address || tx.to === address) {
+                    const eventsToStore: string[] = [];
+                    // Determine the event types
+                    eventsToStore.push(SOCKET_EVENTS.ALL_EVENTS);
+                    eventsToStore.push(SOCKET_EVENTS.SENDER_OR_RECEIVER_EVENTS);
+                    eventsToStore.push(SOCKET_EVENTS.ALL_EVENTS);
+                    eventsToStore.push(SOCKET_EVENTS.SENDER_OR_RECEIVER_EVENTS);
+
+                    if (tx.from === address) {
+                      eventsToStore.push(SOCKET_EVENTS.SENDER_EVENTS);
+                    }
+                    if (tx.to === address) {
+                      eventsToStore.push(SOCKET_EVENTS.RECEIVER_EVENTS);
+                    }
+                    if (valueInUsd > 0 && valueInUsd <= 100) {
+                      eventsToStore.push(SOCKET_EVENTS.VALUE_RANGE.RANGE_0_100);
+                    } else if (valueInUsd > 100 && valueInUsd <= 500) {
+                      eventsToStore.push(
+                        SOCKET_EVENTS.VALUE_RANGE.RANGE_100_500
+                      );
+                    } else if (valueInUsd > 500 && valueInUsd <= 2000) {
+                      eventsToStore.push(
+                        SOCKET_EVENTS.VALUE_RANGE.RANGE_500_2000
+                      );
+                    } else if (valueInUsd > 2000 && valueInUsd <= 5000) {
+                      eventsToStore.push(
+                        SOCKET_EVENTS.VALUE_RANGE.RANGE_2000_5000
+                      );
+                    } else if (valueInUsd > 5000) {
+                      eventsToStore.push(
+                        SOCKET_EVENTS.VALUE_RANGE.RANGE_OVER_5000
+                      );
+                    }
+                    // Store and emit events for each determined type
+                    for (const eventType of eventsToStore) {
+                      const blockchainEvent = new BlockchainEvent();
+                      
+                      blockchainEvent.sender = event.sender;
+                      blockchainEvent.receiver = event.receiver;
+                      blockchainEvent.blockNumber = event.blockNumber;
+                      blockchainEvent.blockHash = event.blockHash;
+                      blockchainEvent.transactionHash = event.transactionHash;
+                      blockchainEvent.gasPrice = event.gasPrice;
+                      blockchainEvent.value = event.value;
+                      blockchainEvent.eventType = eventType;
+
+                      console.log(
+                        "🚀 ~ BlockchainService ~ block.transactions.forEach ~ blockchainEvent:",
+                        blockchainEvent
+                      );
+                      await AppDataSource.manager.save(blockchainEvent);
+                      io.to(`${eventType}`).emit(eventType, event);
+                    }
+                  }
                 });
               }
             }
