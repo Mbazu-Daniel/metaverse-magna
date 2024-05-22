@@ -27,11 +27,12 @@ const io = new Server(httpServer, {
 
 app.set("io", io);
 
-
-
 app.use(helmet());
 app.use(morgan("dev"));
-
+// Health checker
+app.get("/health", (req, res) => {
+  res.status(200).json({ message: "Server is running" });
+});
 
 // API ENDPOINTS
 
@@ -45,4 +46,6 @@ AppDataSource.initialize()
       console.log(`Server is running on port ${PORT}`);
     });
   })
-  .catch((error) => console.log(error));
+  .catch((err) => {
+    console.error("Error during Data Source initialization:", err);
+  });

@@ -28,6 +28,7 @@ export class AuthController {
       throw new ApiError(400, "email or password is incorrect");
     }
   });
+
 }
 
 export const authController = new AuthController();
