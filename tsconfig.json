@@ -1,17 +1,18 @@
 {
-   "compilerOptions": {
-     "target": "ES6",
-     "module": "commonjs",
-       "outDir": "./dist",
+  "compilerOptions": {
+      "target": "ES5",
+    "module": "CommonJS",
+    "sourceMap": true,
+    "outDir": "./dist",
     "rootDir": "./src",
-     "strict": true,
-     "moduleResolution": "node",
-     "esModuleInterop": true,
-     "skipLibCheck": true,
-     "forceConsistentCasingInFileNames": true,
-     "emitDecoratorMetadata": true,
-     "experimentalDecorators": true,
-    
+    "strict": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
+
 }
