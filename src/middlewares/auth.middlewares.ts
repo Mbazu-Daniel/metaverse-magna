@@ -14,7 +14,7 @@ export const authMiddleware = async (
    const cookiesToken = req.cookies.access_token;
   // const token = bearerToken || cookiesToken;
   const token = cookiesToken || bearerToken;
-  console.log("🚀 ~ token:", token)
+ 
 
   if (!token) {
     throw new ApiError(401, "You're not logged in ")
