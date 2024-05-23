@@ -24,9 +24,15 @@ Install the necessary Node.js dependencies using `pnpm`:
 
     pnpm install
 
+#### 3.2. Test Project 
+
+Run project test using Jest library 
+
+    pnpm jest
+
  
 
-#### 3.2. Update `package.json`
+#### 3.3. Update `package.json`
 
 Add a `dev` script in your `package.json` to use `nodemon` for watching changes:
 
@@ -34,13 +40,14 @@ Add a `dev` script in your `package.json` to use `nodemon` for watching changes:
     {
       "scripts": {
         "start": "nodemon dist/server.js",
-        "start:dev": "nodemon --watch './**/*.ts' --exec 'ts-node' src/server.ts"
+        "dev": "nodemon --watch './**/*.ts' --exec 'ts-node' src/server.ts"
+
+
       }
     } 
 
-Replace `your-entry-file.js` with the actual entry point of your application.
 
-#### 3.3. Create `Dockerfile`
+#### 3.4. Create `Dockerfile`
 
 Create a `Dockerfile` in the root directory of your project:
 
@@ -67,7 +74,7 @@ Create a `Dockerfile` in the root directory of your project:
     # Start the application in development mode
     CMD ["pnpm", "run", "dev"]
 
-#### 3.4. Create `docker-compose.yml`
+#### 3.5. Create `docker-compose.yml`
 
 Create a `docker-compose.yml` file in the root directory of your project:
 
