@@ -30,9 +30,6 @@ Install the necessary Node.js dependencies using `pnpm`:
 
 Add a `dev` script in your `package.json` to use `nodemon` for watching changes:
 
-json
-
-Copy code
 
     {
       "scripts": {

@@ -23,8 +23,8 @@ export class EventService {
 
       return parseInt(response.data.result, 16);
     } catch (error) {
-      console.error("Error fetching the latest block number:", error);
-      throw new Error("Failed to fetch the latest block number");
+    
+      throw new ApiError(400,"Failed to fetch the latest block number");
     }
   }
   async getBlockByNumber(value: string) {
@@ -40,8 +40,7 @@ export class EventService {
 
       return response.data.result;
     } catch (error) {
-      console.error(`Error fetching block ${value}:`, error);
-      throw new Error(`Failed to fetch block ${value}`);
+      throw new ApiError(400, `Failed to fetch block ${value}`);
     }
   }
 
