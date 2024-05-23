@@ -1,12 +1,12 @@
 import "reflect-metadata";
 import { Container } from "typedi";
 import { Request, Response, Router } from "express";
-import { BlockchainService } from "../services/events.service";
+import { EventService } from "../services/events.service";
 import asyncHandler from "express-async-handler";
 import { Server } from "socket.io";
 
-const blockchainService = Container.get(BlockchainService);
-export class BlockchainController {
+const eventService = Container.get(EventService);
+export class EventController {
   startListening = asyncHandler(async (req: Request, res: Response) => {
     const address = req.query.address as string | undefined;
 
@@ -17,9 +17,9 @@ export class BlockchainController {
       return;
     }
     const io = req.app.get("io") as Server;
-    blockchainService.startListening(io, address);
+    eventService.startListening(io, address);
     res.status(200).json({ message: "Started listening to blockchain events" });
   });
 }
 
-export const blockchainController = new BlockchainController();
+export const eventController = new EventController();

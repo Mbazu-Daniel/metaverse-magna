@@ -6,6 +6,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { JWT_SECRET, JWT_SECRET_EXPIRY } from "../utils/constants";
 import { AppDataSource } from "../db/data-source";
+import ApiError from "../utils/ApiError";
 
 @Service()
 export class AuthService {
@@ -13,10 +14,12 @@ export class AuthService {
 
   register = async (email: string, password: string) => {
     // Check if the user already exists
-    const existingUser = await this.userRepository.findOne({ where: { email } });
+    const existingUser = await this.userRepository.findOne({
+      where: { email },
+    });
 
     if (existingUser) {
-      throw new Error("User with this email already exists.");
+      throw new ApiError(400, "User with this email already exists.");
     }
     const hashedPassword = await generateHashedPassword(password);
 
@@ -33,7 +36,7 @@ export class AuthService {
   login = async (email: string, password: string) => {
     const user = await this.userRepository.findOne({ where: { email } });
     if (!user || !(await bcrypt.compare(password, user.password))) {
-      throw new Error("Invalid username or password");
+      throw new ApiError(400, "Invalid username or password");
     }
     const token = jwt.sign({ id: user.id }, JWT_SECRET, {
       expiresIn: JWT_SECRET_EXPIRY,
